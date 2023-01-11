@@ -1,30 +1,10 @@
 
 $(document).ready(function(){ 
 
-//Define API variables (url and api key) 
 
-/*This function listens to whether the celsius toggle is checked, if not 
-then the api pulls fahrenheit whether data.  Note the wind speed also 
-changes to KPH.*/ 
-var basis = "&units=imperial"
-
-function checkDisplayBasis (basis){ 
-    $("#display-basis").change(function(){
-    if($(this).is(":checked")){
-        var basis ="&units=metric"
-    } else {var basis ="&units=standard"}
-    // console.log(basis);
-    return(basis)
-})};
-
-checkDisplayBasis(basis)
-
-console.log(checkDisplayBasis.call(basis));
-
-
-let brad = checkDisplayBasis(basis);
-console.log(brad)
-
+var forecastArray = []
+var forecastArrayDateOnly =[]
+var currentDate = dayjs().format('MM/DD/YYYY HH');
 
 
 /* This variable toggles between fahrenheit and celsius.  This default 
@@ -46,82 +26,81 @@ $.ajax({
     method: "GET"
 }).then(function (response) {
 
-    console.log(response)
+    // console.log(response)
     var city = response.name;
-    var temp = Math.round(response.main.temp);
-    var humidity = response.main.humidity;
-    var wind = Math.round(response.wind.speed);
+    var currentTemp = Math.round(response.main.temp);
+    var currentHumidity = response.main.humidity;
+    var currentWind = Math.round(response.wind.speed);
     var currentDate = dayjs().format('MM/DD/YYYY');
     var timeZone = response.timezone;
     var currentWeatherIcon = response.weather[0].icon;
     var currentWeatherDescription = response.weather[0].description;
     var imageLink = "http://openweathermap.org/img/wn/"+currentWeatherIcon + ".png"
     
-    console.log("City:" + city);
-    console.log("Temp:" + temp);
-    console.log("Humidity:" + humidity);
-    console.log("Wind:" + wind);
-    console.log("time zone:" + timeZone);
-    console.log(dayjs().format('MM/DD/YYYY'));
-    console.log(currentWeatherIcon);
-    console.log(imageLink)
-
     //This pushes current weather to website
     $("#current-weather-header").html("<h3>"+city+" " + currentDate + "<img src=" + imageLink + "></img></h3>")
-    // $("h3").text(city + " " + currentDate);
-    // $("h4").html("<img src="+imageLink+"></img>")
-    $("ul li:eq(0)").text(currentWeatherDescription);
-    $("ul li:eq(1)").text("Current Temp: " +temp);
-    $("ul li:eq(2)").text("Humidity: " + humidity);
-    $("ul li:eq(3)").text("Wind: " + wind);
-    $("p:first").text("Current Humidity: " + humidity);
+    $("#current-weather-details").html("<ul style=\"list-style-type: none\"><li>"+currentWeatherDescription + "</li><li>Temp: " + currentTemp + "</li><li>Humidity: " + currentHumidity + "</li><li>Winds: " + currentWind +"</li></ul>")
     
     
+    
+/* This is the AJAX call to obtain the current weather for the selected city*/    
 $.ajax({
     url: queryUrl1,
     method: "GET"
 }).then(function (response1) {
     var forecastData = response1.list
 
-    console.log(forecastData)
+    // console.log(forecastData)
 
-    var forecastGMT = dayjs(forecastData[0].dt_txt).format('MM/DD/YYYY HH');
-    var forecastLocalTime = dayjs(dayjs(forecastData[0].dt_txt, 'YYYY-MM-DD hh',true).add(response.timezone,'seconds')).format('MM/DD/YYYY HH');
-    var forecastTemp = forecastData[0].main.temp;
-    var forecastHumidity = forecastData[0].main.humidity;
-    var forecastWind = forecastData[0].wind.speed;
-    var forecastWeatherDescription = forecastData[0].weather[0].description
-    var forecastWeatherIcon = forecastData[0].weather[0].icon
+    for (i=0; i<forecastData.length; i++){
+    var forecastGMT = dayjs(forecastData[i].dt_txt).format('MM/DD/YYYY');
+    var forecastLocalTime = dayjs(dayjs(forecastData[i].dt_txt, 'YYYY-MM-DD',true).add(response.timezone,'seconds')).format('MM/DD/YYYY');
+    var forecastTemp = forecastData[i].main.temp;
+    var forecastHumidity = forecastData[i].main.humidity;
+    var forecastWind = forecastData[i].wind.speed;
+    var forecastWeatherDescription = forecastData[i].weather[0].description;
+    var forecastWeatherIcon = forecastData[i].weather[0].icon;
+    forecastArray.push([forecastLocalTime , forecastTemp , forecastHumidity  , forecastWind , forecastWeatherDescription , forecastWeatherIcon]);
+    forecastArrayDateOnly.push(forecastLocalTime);
+        
+    }   
+         
+    /* This variable and for loop obtain the first position in the forecast array that is a new day in the Input City*/
+    var arrayCounter = 0
 
-    console.log(forecastGMT)
-    console.log(forecastLocalTime)
-    console.log(forecastTemp)
-    console.log(forecastHumidity)
-    console.log(forecastWind)
-    console.log(forecastWeatherDescription)
-    console.log(forecastWeatherIcon)
+    for (i=0; i<forecastArrayDateOnly.length; i++) {
+        if(dayjs(forecastArrayDateOnly[i])<= dayjs(currentDate)){
+         arrayCounter = arrayCounter +1
+        }
+    }
+    console.log(arrayCounter)
+
+    var day1 = arrayCounter+4
+    var day2 = arrayCounter+12
+    var day3 = arrayCounter+20
+    var day4 = arrayCounter+28
+    var day5 = arrayCounter+36
+    
+    // console.log(forecastArray[day1])
+    // console.log(forecastArray[day2])
+    // console.log(forecastArray[day3])
+    // console.log(forecastArray[day4])
+    // console.log(forecastArray[day5])
+
+    /* This pushes the five day forecasts to the web page*/ 
+    $("#1").html("<h6>"+forecastArray[day1][0]+ "<img src=http://openweathermap.org/img/wn/" + forecastArray[day1][5] + ".png></img></h6><ul class=\"list-group\"style=\"list-style-type: none\"><li>"+forecastArray[day1][4] + "</li><li>Temp: " + forecastArray[day1][1] + "</li><li>Humidity: " + forecastArray[day1][2] + "</li><li>Winds: " + forecastArray[day1][3] +"</li></ul>")
+
+    $("#2").html("<h6>"+forecastArray[day2][0]+ "<img src=http://openweathermap.org/img/wn/" + forecastArray[day2][5] + ".png></img></h6><ul class=\"list-group\" style=\"list-style-type: none\"><li>"+forecastArray[day2][4] + "</li><li>Temp: " + forecastArray[day2][1] + "</li><li>Humidity: " + forecastArray[day2][2] + "</li><li>Winds: " + forecastArray[day2][3] +"</li></ul>")
+
+    $("#3").html("<h6>"+forecastArray[day3][0]+ "<img src=http://openweathermap.org/img/wn/" + forecastArray[day3][5] + ".png></img></h6><ul class=\"list-group\" style=\"list-style-type: none\"><li>"+forecastArray[day3][4] + "</li><li>Temp: " + forecastArray[day3][1] + "</li><li>Humidity: " + forecastArray[day3][2] + "</li><li>Winds: " + forecastArray[day3][3] +"</li></ul>")
+
+    $("#4").html("<h6>"+forecastArray[day4][0]+ "<img src=http://openweathermap.org/img/wn/" + forecastArray[day4][5] + ".png></img></h6><ul class=\"list-group\" style=\"list-style-type: none\"><li>"+forecastArray[day4][4] + "</li><li>Temp: " + forecastArray[day4][1] + "</li><li>Humidity: " + forecastArray[day4][2] + "</li><li>Winds: " + forecastArray[day4][3] +"</li></ul>")
+
+    $("#5").html("<h6>"+forecastArray[day5][0]+ "<img src=http://openweathermap.org/img/wn/" + forecastArray[day5][5] + ".png></img></h6><ul class=\"list-group\" style=\"list-style-type: none\"><li>"+forecastArray[day1][4] + "</li><li>Temp: " + forecastArray[day1][1] + "</li><li>Humidity: " + forecastArray[day5][2] + "</li><li>Winds: " + forecastArray[day5][3] +"</li></ul>")
 
 
-    //Long way to get the date in local time
-    //Get date string from api (note this is GMT)
-    // var gmtDateData = forecastData[0].dt_txt
-    // console.log("TEXT STRING OF GMT DATE: " + dayjs(gmtDateData).format('MM/DD/YYYY HH'))
-    // Convert the text string into a dayjs consumable string (so that dayjs can recognize the string as a date)
-    // var gmtDate = dayjs(gmtDateData, 'YYYY-MM-DD hh',true)
-    //Add the timezone value to the GMT date - this converts the time from GMT to the timezone of the city asked for. 
-    // var localDatePlusOne = gmtDate.add(response.timezone,'seconds')
-    // var localDatePlusOneReformated = dayjs(forecastInLocalTime).format('MM/DD/YYYY HH')
-    // console.log(localDatePlusOneReformated)
-
-
-    //Combined variable declaration that wraps the date functions into one. 
-    // var forecastInLocalTime = dayjs(dayjs(forecastData[0].dt_txt, 'YYYY-MM-DD hh',true).add(response.timezone,'seconds')).format('MM/DD/YYYY HH')
-    // console.log("Forecast Local Time: " + forecastInLocalTime);
-      
-
-    //FOR LOOP with local time added 
-    // for (i=0; i<forecastData.length; i++)
-    // console.log("GMT TIME: " + forecastData[i].dt_txt + "////LOCAL TIME: " + dayjs(dayjs(forecastData[i].dt_txt, 'YYYY-MM-DD hh',true).add(response.timezone,'seconds')).format('MM/DD/YYYY HH') + "//TEMP: " + forecastData[i].main.temp + "//HUMIDITY: " + forecastData[i].main.humidity + "//WIND: " + forecastData[i].wind.speed)
+    
+    
 
 })
 })

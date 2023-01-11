@@ -7,7 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="style.css" />
     <title>Weather Dashboard</title>
   </head>
   <body>
@@ -45,14 +45,16 @@
           </div>
           <div id="current-weather"  class="col-sm-9 border border-secondary bg-primary">
             <div id="current-weather-header">
-            <h3>THIS CITY </h3>
+            <!-- <h3>THIS CITY </h3> -->
           </div>
-            <ul id="current-weather-deatils" style="list-style-type: none">
+          <div id="current-weather-details">
+            <!-- <ul  style="list-style-type: none"> -->
+              <!-- <li></li>
               <li></li>
               <li></li>
-              <li></li>
-              <li></li>
-            </ul>
+              <li></li> -->
+            <!-- </ul> -->
+          </div>
           </div>
           </div>
       </div>
@@ -65,21 +67,21 @@
         <div class="col-sm-3 m-0 border border-primary">
           Search History 
         </div>
-        <div class="col-sm-9 m-0">
-          <div class="row">
-            <div class="col-2 col-sm-2 border border-primary">
+        <div id="forecast-cards"  class="col-sm-9 container-lg">
+          <div class="row ">
+            <div id="1" class="col-2 col-sm-2 border border-primary bg-success bg-gradient">
               Day 1
             </div>
-            <div class="col-2 col-sm-2 border border-primary">
+            <div id="2" class="col-2 col-sm-2 border border-primary bg-success bg-gradient">
               Day 2
             </div>
-            <div class="col-4 col-sm-2 border border-primary">
+            <div id="3" class="col-4 col-sm-2 border border-primary bg-success bg-gradient">
               Day 3
             </div>
-            <div class="col-2 col-sm-2 border border-primary">
+            <div id="4" class="col-2 col-sm-2 border border-primary bg-success bg-gradient">
               Day 4
             </div>
-            <div class="col-2 col-sm-2 border border-primary">
+            <div id="5" class="col-2 col-sm-2 border border-primary bg-success bg-gradient">
               Day 5
             </div>
           </div>
