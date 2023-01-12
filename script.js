@@ -1,41 +1,46 @@
 $(document).ready(function () {
-  var currentDate = dayjs().format("MM/DD/YYYY HH");
+//   var currentDate = dayjs().format("MM/DD/YYYY HH");
   var citiesSaved = [];
   citiesSaved = JSON.parse(localStorage.getItem("citiesSavedStringify"));
-  // localStorage. clear();
+  localStorage. clear();
   // console.log(citiesSaved)
 
   displaySearchHistory();
 
   console.log(citiesSaved.length);
 
-
-
-
-
-
-
   function displaySearchHistory() {
+    callApi()
+    if (citiesSaved === null) citiesSaved = []
     console.log(citiesSaved.length);
     var searchHistoryEl = $("#searchHistory")
+    $("#searchHistory").empty()
     for (i = 0; i < citiesSaved.length; i++) {
     var newBtn = $("<button>")
-    newBtn.addClass("btn btn-primary")
+    newBtn.addClass("btn btn-primary text-nowrap")
    
         searchHistoryEl.append(newBtn)
         newBtn.attr('name', citiesSaved[i])
         newBtn.text(citiesSaved[i])
-      
+        
     }
   }
 
   
+    $("button").on("click", function(event){
+        city = $(this).text()
+        console.log(city)
+        callApi(city)
+    })
+    
+//   }
+  
   
   /* This variable is the city to search weather on.*/
-  var city = "";
-  
+  var city = "New York";
+  callApi(city)
 
-  $("button").on("click", function (event) {
+  $("#submitBtn").on("click", function (event) {
     event.preventDefault();
     city = $("#inputCity").val();
     callApi(city);
@@ -44,10 +49,12 @@ $(document).ready(function () {
     
     citiesSaved.push(city);
     localStorage.setItem("citiesSavedStringify", JSON.stringify(citiesSaved));
-    
+    displaySearchHistory();
+
   });
 
   
+
   var timeZone = "";
 
   //AJAX call to both current weather API and forecasted API.
