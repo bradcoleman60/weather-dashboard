@@ -29,8 +29,7 @@ $(document).ready(function () {
         city = $(this).text()
         callApi(city)
     })
-    
-  
+      
     /* This variable is the city to search weather on and sets the default to New York that is used on page load.*/
     var city = "New York";
   

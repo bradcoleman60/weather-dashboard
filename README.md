@@ -4,46 +4,67 @@
 1. [Description](#description)
 2. [Testing](#testing)
 3. [Technology Used and Credits](#technology-used-and-credits)
-4. [Learnings](#learnings)
-5. [About the Author](#about-the-author)
-6. [License](#license)
+4. [About the Author](#about-the-author)
+5. [License](#license)
 
 [Visit the Deployed Site](https://bradcoleman60.github.io/weather-dashboard/)
 
 
 # **Description**
 
-The goal of this project was to create a timed multiple choice quiz on the topic of JavaScript.  This project expanded my use of JavaScript including:
-1. using localStorage to store the scores of quizzes, 
-2. using querySelectors to change the text on the HTML page, 
-3. using SetAttribute to change how elements of the page look and react, 
-4. changing CSS on the hover of an HTML element, 
-5. the use of a FOR loop to generate a table and then the use of inner.html to push the content of the table to the webpage 
-6. the use of an array within an array such that I had configure to indexes to retrieve the desired value, 
-7. the use of the setInterval method to create a countdown timer that was decremented 5 seconds if the visitor submitted an incorrect answer.  
+The goal of this project was to create a website that allows a user to search weather by city name.  This was my first project that included interaction wih a third party API that retrieves data.  This project expanded my use of JavaScript including and API's.
 
-When the visitor arrives at the page, there is a welcome message and a prominent "Start Quiz" button that, when clicked starts the quiz and the timer. Below is a screen shot of the opening page. 
+When the page is loaded the page is set to show the current and a 5 day forecast data for New York city.  The page displays the current temperature, weather description, humidity, and wind speed.  It also shows an icon that depicts the weather condition. It Also displays the same measures for the next 5-day forecast.  
 
-![screenshot](/screen_shot_1.png)
+![screenshot](/shot1.png)
 
-After the quiz is started the question box is populated with the multiple-choice questions.  I used an html form along with an input type equal to "radio".   Although I considered using a check-box input type, I learned that using a radio input type only one option can be selected, whereas a check-box input type, multiple items can be selected.  Ultimately,  I set the display of the radio selector to "none" in my css and applied css to allow the user to merely select the text of the answer desired.  Note in the screen shot below, that the counter is in the upper right-hand corner of the header bar.    
+When the user searches for a city, then the weather is updated for the data retrieved from OpenWeather.org (https://openweathermap.org/api), again both for the current time and the 5-day forecast. 
 
-![screenshot](/screen_shot_2.png)
+![screenshot](/shot2.png)
 
-At the completion of the quiz, which is defined as either the time limit of 90 seconds is reached, or all of the questions have been answered, the users have the option to enter they initials and store their score in local storage. If they choose not to enter their initials, I provided an additional button to display the current leader board as shown in the following screenshot.
-
-![screenshot](/screen_shot_4.png)
-
-After the users enter their initials or hit the button to show the leaderboard that is stored in local storage, the leaderboard is displayed as shown in the following screenshot.  I added a calculated field in the table to show the correct answers as a percentage of the total number of questions.  Additionally, I included a button below the table that allows the users to retake the quiz. 
-
-![screenshot](/screen_shot_3.png)
 
 # **Highlighted Code Example**
 
-The following is code that I created that I would like to highlight.   
+The following is code that I created that I would like to highlight.  This highlights the use of an API call (AJAX). Upon the response, I then parsed through the available data to get only the data that is needed.  Further, I had to update the website html with this data.  The code snippet below is the code to retrieve and display the current weather data for the selected city.  
 
 ```
+/* This CALLS the forecast API*/
+    $.ajax({
+      url: queryUrl,
+      method: "GET",
+      cache: false,
+        }).then(function (response) {
+            var city = response.name;
+            var currentTemp = Math.round(response.main.temp);
+            var currentHumidity = response.main.humidity;
+            var currentWind = Math.round(response.wind.speed);
+            var currentDate = dayjs().format("MM/DD/YYYY");
+            timeZone = response.timezone;
+            var currentWeatherIcon = response.weather[0].icon;
+            var currentWeatherDescription = response.weather[0].description;
+            var imageLink ="http://openweathermap.org/img/wn/" + currentWeatherIcon + ".png";
 
+      //This pushes current weather to website
+      $("#current-weather-header").html(
+        "<h3>" +
+          city +
+          " " +
+          currentDate +
+          "<img src=" +
+          imageLink +
+          "></img></h3>"
+      );
+      $("#current-weather-details").html(
+        '<ul style="list-style-type: none"><li>' +
+          currentWeatherDescription +
+          "</li><li>Temp: " +
+          currentTemp +
+          "</li><li>Humidity: " +
+          currentHumidity +
+          "</li><li>Winds: " +
+          currentWind +
+          "</li></ul>"
+      );
 
 
 ```
@@ -75,15 +96,6 @@ To test to ensure the code rendered the desired output I iterated a series of te
 I used many useful references in completing this project including the following.  In particular, I found the layout of the w3schools reference materials to be extremely intuitive and helpful.  They even have a "try me" feature where elements of code can be reviewed and tested. 
 
 - [W3Schools - Java Script Code reference:](https://www.w3schools.com/js/default.asp)
-
-
-# **Learnings**
-
-I had 2 major learnings on the project:
-
-1. Use of Radio Button Input - When researching how to facilitate the user to select one of four possible answers, I came across the input types of check-box and radio.  I initially planned to have the user check the answer and then hit a submit button.  This did not work as the check-box input allows for more than one item to be selected.  So, I moved to using a radio button as this input only allows one item to be selected.  Once I was able to get the basic functionality of the question box to appear and to iterate through the series of questions, I observed that the user experience was "clunky" as I was requiring the user to perform two mouse clicks to answer a question. After experimenting and researching I was able to use CSS to NOT display the radio button and then use a label around the radio button with an unique id element to essentially turn the entire answer into a clickable icon. As such, the user only needs to click the answer to submit the answer. 
-
-2. LocalStorage - This was the first time working with localStorage and was previously unaware that such feature was available.  It took me some time to iterate how to set and get data to and from localStorage.  This required retrieving any existing localStorage values and then appending (or pushing) new values into that string before saving (or setting) back to localStorage.   
 
 # **About the Author**
 
